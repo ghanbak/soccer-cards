@@ -2,12 +2,14 @@
   "expo": {
     "name": "Soccer Cards",
     "slug": "soccer-cards",
+    "scheme": "soccercards",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ghanbak.soccer-cards"
     },
     "android": {
       "adaptiveIcon": {
