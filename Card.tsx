@@ -18,8 +18,15 @@ export function Card({ color, style }: CardProps) {
 const styles = StyleSheet.create({
   card: {
     position: 'absolute',
+    // Center within the parent independent of Yoga's absolute-child alignment:
+    // anchor the top-left to the parent's center, then pull back by half the
+    // card's own size. The parent's animated transform composes on top of this.
+    top: '50%',
+    left: '50%',
     width: 150,
     height: 210,
+    marginTop: -105,
+    marginLeft: -75,
     borderRadius: 22,
     borderWidth: 4,
     borderColor: OUTLINE,
