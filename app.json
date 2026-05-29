@@ -28,6 +28,12 @@
           "backgroundColor": "#FFFF00"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "97e1d378-f388-4ea6-a534-e4090bca483c"
+      }
+    },
+    "owner": "ghanbak"
   }
 }
