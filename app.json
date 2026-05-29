@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Soccer Cards",
+    "name": "Book 'Em",
     "slug": "soccer-cards",
     "scheme": "soccercards",
     "version": "1.0.0",
@@ -13,15 +13,21 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "backgroundColor": "#FFFF00",
+        "foregroundImage": "./assets/android-icon-foreground.png"
       },
       "predictiveBackGestureEnabled": false
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#FFFF00"
+        }
+      ]
+    ]
   }
 }

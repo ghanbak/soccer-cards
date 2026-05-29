@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { AppState, Pressable, StyleSheet, View } from 'react-native';
 import Animated, {
   Easing,
-  interpolate,
   interpolateColor,
   useAnimatedStyle,
   useReducedMotion,
@@ -17,18 +16,17 @@ import {
 import * as Brightness from 'expo-brightness';
 import * as Haptics from 'expo-haptics';
 import { useKeepAwake } from 'expo-keep-awake';
+import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 
-import { Card } from './Card';
+import { AnimatedSplash } from './AnimatedSplash';
+import { CardStack, STACK_BOTTOM_GAP } from './CardStack';
 import { CARD_RED, CARD_YELLOW } from './colors';
 
-type CardSide = 'yellow' | 'red';
+// Hold the native splash until the JS splash overlay is ready to take over.
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
-// Card-stack poses (degrees / px). The front card tilts left; the back card
-// fans out to the right and sits slightly lower — matching the mock.
-const FRONT = { rotate: -7, x: -20, y: 0 };
-const BACK = { rotate: 9, x: 26, y: 14 };
-const LIFT = 16; // upward arc applied mid-swap so the cards feel physical
+type CardSide = 'yellow' | 'red';
 
 const BG_FADE_MS = 120;
 const BG_EASING = Easing.bezier(0.4, 0, 0.2, 1);
@@ -103,33 +101,6 @@ function CardScene() {
     backgroundColor: interpolateColor(color.value, [0, 1], [CARD_YELLOW, CARD_RED]),
   }));
 
-  // Yellow card travels FRONT -> BACK as swap goes 0 -> 1; red card does the reverse.
-  const yellowStyle = useAnimatedStyle(() => {
-    const p = swap.value;
-    const lift = interpolate(p, [0, 0.5, 1], [0, -LIFT, 0]);
-    return {
-      zIndex: p < 0.5 ? 2 : 1,
-      transform: [
-        { translateX: interpolate(p, [0, 1], [FRONT.x, BACK.x]) },
-        { translateY: interpolate(p, [0, 1], [FRONT.y, BACK.y]) + lift },
-        { rotate: `${interpolate(p, [0, 1], [FRONT.rotate, BACK.rotate])}deg` },
-      ],
-    };
-  });
-
-  const redStyle = useAnimatedStyle(() => {
-    const p = swap.value;
-    const lift = interpolate(p, [0, 0.5, 1], [0, -LIFT, 0]);
-    return {
-      zIndex: p < 0.5 ? 1 : 2,
-      transform: [
-        { translateX: interpolate(p, [0, 1], [BACK.x, FRONT.x]) },
-        { translateY: interpolate(p, [0, 1], [BACK.y, FRONT.y]) + lift },
-        { rotate: `${interpolate(p, [0, 1], [BACK.rotate, FRONT.rotate])}deg` },
-      ],
-    };
-  });
-
   const label =
     card === 'yellow'
       ? 'Yellow card. Tap to show red card.'
@@ -138,15 +109,9 @@ function CardScene() {
   return (
     <Animated.View style={[styles.root, backgroundStyle]}>
       <StatusBar style="dark" />
-      <View style={[styles.scene, { paddingBottom: insets.bottom + 24 }]}>
-        <Pressable
-          onPress={toggle}
-          accessibilityRole="button"
-          accessibilityLabel={label}
-          style={styles.stack}
-        >
-          <Card color={CARD_YELLOW} style={yellowStyle} />
-          <Card color={CARD_RED} style={redStyle} />
+      <View style={[styles.scene, { paddingBottom: insets.bottom + STACK_BOTTOM_GAP }]}>
+        <Pressable onPress={toggle} accessibilityRole="button" accessibilityLabel={label}>
+          <CardStack swap={swap} />
         </Pressable>
       </View>
     </Animated.View>
@@ -154,9 +119,12 @@ function CardScene() {
 }
 
 export default function App() {
+  const [splashDone, setSplashDone] = useState(false);
+
   return (
     <SafeAreaProvider>
       <CardScene />
+      {!splashDone && <AnimatedSplash onAnimationComplete={() => setSplashDone(true)} />}
     </SafeAreaProvider>
   );
 }
@@ -169,12 +137,5 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'flex-end',
-  },
-  // Sized to hug the fanned card-stack — the only tappable region.
-  stack: {
-    width: 240,
-    height: 250,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });

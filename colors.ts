@@ -1,6 +1,7 @@
-// Card colors, eyeballed against the design mock (.context/attachments/6xdKUt/image.png).
-export const CARD_YELLOW = '#FFE600';
-export const CARD_RED = '#E5372A';
+// Locked palette (pure primaries). Single source of truth for the app, the
+// animated splash, and the generated icon.
+export const CARD_YELLOW = '#FFFF00';
+export const CARD_RED = '#FF0000';
 
-// Near-black outline drawn around each card and used for status-bar-safe contrast.
-export const OUTLINE = '#1C1C1E';
+// Card outline — also used as the text color (e.g. the splash wordmark) in v1.
+export const OUTLINE = '#363636';

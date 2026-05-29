@@ -3,6 +3,11 @@ import Animated from 'react-native-reanimated';
 
 import { OUTLINE } from './colors';
 
+// A single card's dimensions. Exported so the card-stack and the animated
+// splash can compute layout against the same source of truth.
+export const CARD_W = 150;
+export const CARD_H = 210;
+
 type CardProps = {
   color: string;
   // Animated transform/zIndex style produced by the parent card-stack.
@@ -23,10 +28,10 @@ const styles = StyleSheet.create({
     // card's own size. The parent's animated transform composes on top of this.
     top: '50%',
     left: '50%',
-    width: 150,
-    height: 210,
-    marginTop: -105,
-    marginLeft: -75,
+    width: CARD_W,
+    height: CARD_H,
+    marginTop: -CARD_H / 2,
+    marginLeft: -CARD_W / 2,
     borderRadius: 22,
     borderWidth: 4,
     borderColor: OUTLINE,
