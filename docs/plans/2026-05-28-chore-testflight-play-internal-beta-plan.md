@@ -20,7 +20,7 @@ Goal: get an installable build into testers' hands on **both** platforms via the
 
 - [ ] **Confirm `production` profile outputs are store-ready** in `eas.json`: iOS `distribution: store` (default) and Android **AAB** (production default — do *not* set `buildType: apk`). Keep `autoIncrement: true` so build numbers bump.
 - [ ] **Decide marketing version**: `1.0.0` in `app.json`. With `appVersionSource: remote`, EAS owns `buildNumber`/`versionCode` and auto-increments on each production build.
-- [ ] **Verify the 1024² iOS icon has NO alpha channel** (`assets/icon.png`). Apple rejects marketing icons with transparency; Expo usually flattens it, but confirm. (`sips -g hasAlpha assets/icon.png` → if `yes`, flatten against `#FFFF00`.)
+- [x] **Verify the 1024² iOS icon has NO alpha channel** — done; `assets/icon.png` flattened against `#FFFF00` with ImageMagick (`hasAlpha: no`).
 - [ ] **Run a `production` build on a device once** before submitting, to confirm the release build (Hermes, minified, no Metro) launches and the splash/animation work outside the dev client.
 
 ---
@@ -63,7 +63,7 @@ Internal testing track = up to 100 testers via email list, **no review**, live w
 
 ## 3. App-readiness polish (shared)
 
-- [ ] **Privacy policy (zero-data)**: draft a short "Book 'Em collects no personal data" policy and host it at a stable URL (GitHub Pages on this repo is simplest). Internal **TestFlight** doesn't require it; **Play** asks for it in App content and **external** beta needs it on both — cheap to do now.
+- [x] **Privacy policy (zero-data)**: done — `privacy-policy.html` hosted via GitHub Pages at **https://ghanbak.github.io/soccer-cards/privacy-policy.html** (use this URL in the Play "App content" privacy-policy field).
 - [ ] **App Store category / Play category**: pick (e.g., **Sports** or **Entertainment**).
 - [ ] **Minimal screenshots** for the listings: capture from the iOS simulator (we already have splash + yellow + red states in `.context/splash-capture/`). iOS needs at least one 6.7"/6.9" set; Play needs ≥2 phone screenshots. (Strictly required for *closed/open* and store listing; internal can often go without — capture anyway, it's quick.)
 - [ ] **Listing copy**: app name, subtitle/short description, full description. Keep it short — it's a one-tap referee card flasher.
