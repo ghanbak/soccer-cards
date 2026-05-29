@@ -12,6 +12,7 @@
       "bundleIdentifier": "com.ghanbak.soccer-cards"
     },
     "android": {
+      "package": "com.ghanbak.soccercards",
       "adaptiveIcon": {
         "backgroundColor": "#FFFF00",
         "foregroundImage": "./assets/android-icon-foreground.png"
