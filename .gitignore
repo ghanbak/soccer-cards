@@ -39,3 +39,7 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# Store-submission secrets (Play service account JSON, ASC API .p8)
+/secrets/
+*.p8
