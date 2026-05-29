@@ -2,20 +2,20 @@
   "expo": {
     "name": "Book 'Em",
     "slug": "soccer-cards",
-    "scheme": "soccercards",
+    "scheme": "bookem",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ghanbak.soccer-cards",
+      "bundleIdentifier": "com.ghanbak.bookem",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
-      "package": "com.ghanbak.soccercards",
+      "package": "com.ghanbak.bookem",
       "adaptiveIcon": {
         "backgroundColor": "#FFFF00",
         "foregroundImage": "./assets/android-icon-foreground.png"
