@@ -1,3 +1,4 @@
+import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { StyleSheet, useWindowDimensions } from 'react-native';
 import Animated, {
@@ -10,7 +11,6 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import * as SplashScreen from 'expo-splash-screen';
 
 import { CardStack, STACK_BOTTOM_GAP, STACK_H } from './CardStack';
 import { CARD_YELLOW, OUTLINE } from './colors';
@@ -44,6 +44,7 @@ export function AnimatedSplash({
   const restingCenterY = height - insets.bottom - STACK_BOTTOM_GAP - STACK_H / 2;
   const travel = restingCenterY - splashCenterY;
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: run-once mount effect — adding these deps would replay the splash fly-in.
   useEffect(() => {
     // Reveal the JS layer (drawn over the identical yellow native frame).
     SplashScreen.hideAsync().catch(() => {});
@@ -61,7 +62,6 @@ export function AnimatedSplash({
         if (done) runOnJS(onAnimationComplete)();
       }),
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const cardsStyle = useAnimatedStyle(() => ({
