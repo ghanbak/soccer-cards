@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { AppState, Pressable, StyleSheet, View } from 'react-native';
+import { useEffect, useRef, useState } from "react";
+import { AppState, Pressable, StyleSheet, View } from "react-native";
 import Animated, {
   Easing,
   interpolateColor,
@@ -8,25 +8,25 @@ import Animated, {
   useSharedValue,
   withSpring,
   withTiming,
-} from 'react-native-reanimated';
+} from "react-native-reanimated";
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
-} from 'react-native-safe-area-context';
-import * as Brightness from 'expo-brightness';
-import * as Haptics from 'expo-haptics';
-import { useKeepAwake } from 'expo-keep-awake';
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
+} from "react-native-safe-area-context";
+import * as Brightness from "expo-brightness";
+import * as Haptics from "expo-haptics";
+import { useKeepAwake } from "expo-keep-awake";
+import * as SplashScreen from "expo-splash-screen";
+import { StatusBar } from "expo-status-bar";
 
-import { AnimatedSplash } from './AnimatedSplash';
-import { CardStack, STACK_BOTTOM_GAP } from './CardStack';
-import { CARD_RED, CARD_YELLOW } from './colors';
+import { AnimatedSplash } from "./AnimatedSplash";
+import { CardStack, STACK_BOTTOM_GAP } from "./CardStack";
+import { CARD_RED, CARD_YELLOW } from "./colors";
 
 // Hold the native splash until the JS splash overlay is ready to take over.
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
-type CardSide = 'yellow' | 'red';
+type CardSide = "yellow" | "red";
 
 const BG_FADE_MS = 120;
 const BG_EASING = Easing.bezier(0.4, 0, 0.2, 1);
@@ -58,9 +58,9 @@ function useMaxBrightness() {
 
     pin();
     // Restore only on a real background transition, not transient 'inactive'.
-    const sub = AppState.addEventListener('change', (state) => {
-      if (state === 'active') pin();
-      else if (state === 'background') restore();
+    const sub = AppState.addEventListener("change", (state) => {
+      if (state === "active") pin();
+      else if (state === "background") restore();
     });
 
     return () => {
@@ -73,7 +73,7 @@ function useMaxBrightness() {
 function CardScene() {
   const insets = useSafeAreaInsets();
   const reduceMotion = useReducedMotion();
-  const [card, setCard] = useState<CardSide>('yellow');
+  const [card, setCard] = useState<CardSide>("yellow");
 
   // 0 = yellow in front (initial), 1 = red in front. Decoupled from color identity.
   const swap = useSharedValue(0);
@@ -84,8 +84,8 @@ function CardScene() {
 
   const toggle = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    const next: CardSide = card === 'yellow' ? 'red' : 'yellow';
-    const target = next === 'red' ? 1 : 0;
+    const next: CardSide = card === "yellow" ? "red" : "yellow";
+    const target = next === "red" ? 1 : 0;
     setCard(next);
 
     if (reduceMotion) {
@@ -93,24 +93,40 @@ function CardScene() {
       color.value = target;
     } else {
       swap.value = withSpring(target, SWAP_SPRING);
-      color.value = withTiming(target, { duration: BG_FADE_MS, easing: BG_EASING });
+      color.value = withTiming(target, {
+        duration: BG_FADE_MS,
+        easing: BG_EASING,
+      });
     }
   };
 
   const backgroundStyle = useAnimatedStyle(() => ({
-    backgroundColor: interpolateColor(color.value, [0, 1], [CARD_YELLOW, CARD_RED]),
+    backgroundColor: interpolateColor(
+      color.value,
+      [0, 1],
+      [CARD_YELLOW, CARD_RED],
+    ),
   }));
 
   const label =
-    card === 'yellow'
-      ? 'Yellow card. Tap to show red card.'
-      : 'Red card. Tap to show yellow card.';
+    card === "yellow"
+      ? "Yellow card. Tap to show red card."
+      : "Red card. Tap to show yellow card.";
 
   return (
     <Animated.View style={[styles.root, backgroundStyle]}>
       <StatusBar style="dark" />
-      <View style={[styles.scene, { paddingBottom: insets.bottom + STACK_BOTTOM_GAP }]}>
-        <Pressable onPress={toggle} accessibilityRole="button" accessibilityLabel={label}>
+      <View
+        style={[
+          styles.scene,
+          { paddingBottom: insets.bottom + STACK_BOTTOM_GAP },
+        ]}
+      >
+        <Pressable
+          onPress={toggle}
+          accessibilityRole="button"
+          accessibilityLabel={label}
+        >
           <CardStack swap={swap} />
         </Pressable>
       </View>
@@ -124,7 +140,9 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <CardScene />
-      {!splashDone && <AnimatedSplash onAnimationComplete={() => setSplashDone(true)} />}
+      {!splashDone && (
+        <AnimatedSplash onAnimationComplete={() => setSplashDone(true)} />
+      )}
     </SafeAreaProvider>
   );
 }
@@ -135,7 +153,7 @@ const styles = StyleSheet.create({
   },
   scene: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
+    alignItems: "center",
+    justifyContent: "flex-end",
   },
 });
