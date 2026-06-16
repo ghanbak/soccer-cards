@@ -1,6 +1,6 @@
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import { StyleSheet, useWindowDimensions } from 'react-native';
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect } from "react";
+import { StyleSheet, useWindowDimensions } from "react-native";
 import Animated, {
   Easing,
   runOnJS,
@@ -9,15 +9,15 @@ import Animated, {
   useSharedValue,
   withDelay,
   withTiming,
-} from 'react-native-reanimated';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+} from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { CardStack, STACK_BOTTOM_GAP, STACK_H } from './CardStack';
-import { CARD_YELLOW, OUTLINE } from './colors';
+import { CardStack, STACK_BOTTOM_GAP, STACK_H } from "./CardStack";
+import { CARD_YELLOW, OUTLINE } from "./colors";
 
-const SPLASH_SCALE = 1.6; // cards start larger, shrink to 1.0 at rest
-const ENTER_MS = 180; // content fades in over the bare-yellow native frame
-const HOLD_MS = 150; // brief beat before the cards fly down
+const SPLASH_SCALE = 1.2; // cards start larger, shrink to 1.0 at rest
+const ENTER_MS = 240; // content fades in over the bare-yellow native frame
+const HOLD_MS = 320; // brief beat before the cards fly down
 const TRAVEL_MS = 650;
 
 // Code-driven splash. The native cold frame is a solid yellow; this overlay
@@ -41,7 +41,7 @@ export function AnimatedSplash({
   // Stack center: from screen middle (splash) down to the app's resting spot,
   // computed from the same inputs CardScene uses.
   const splashCenterY = height * 0.4;
-  const restingCenterY = height - insets.bottom - STACK_BOTTOM_GAP - STACK_H / 2;
+  const restingCenterY = height - (STACK_H - 88) / 2;
   const travel = restingCenterY - splashCenterY;
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: run-once mount effect — adding these deps would replay the splash fly-in.
@@ -58,9 +58,13 @@ export function AnimatedSplash({
     enter.value = withTiming(1, { duration: ENTER_MS });
     progress.value = withDelay(
       ENTER_MS + HOLD_MS,
-      withTiming(1, { duration: TRAVEL_MS, easing: Easing.out(Easing.cubic) }, (done) => {
-        if (done) runOnJS(onAnimationComplete)();
-      }),
+      withTiming(
+        1,
+        { duration: TRAVEL_MS, easing: Easing.out(Easing.cubic) },
+        (done) => {
+          if (done) runOnJS(onAnimationComplete)();
+        },
+      ),
     );
   }, []);
 
@@ -74,6 +78,7 @@ export function AnimatedSplash({
 
   const wordmarkStyle = useAnimatedStyle(() => ({
     opacity: enter.value * (1 - progress.value),
+    transform: [{ translateY: progress.value * travel }],
   }));
 
   // Don't paint the centered cards under reduce-motion (we hand off immediately).
@@ -82,11 +87,7 @@ export function AnimatedSplash({
   return (
     <Animated.View style={styles.fill}>
       <Animated.View
-        style={[
-          styles.cards,
-          { top: splashCenterY - STACK_H / 2 },
-          cardsStyle,
-        ]}
+        style={[styles.cards, { top: splashCenterY - STACK_H / 2 }, cardsStyle]}
       >
         <CardStack swap={swap} />
       </Animated.View>
@@ -107,7 +108,7 @@ export function AnimatedSplash({
 
 const styles = StyleSheet.create({
   fill: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
@@ -116,19 +117,19 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   cards: {
-    position: 'absolute',
+    position: "absolute",
     left: 0,
     right: 0,
-    alignItems: 'center',
+    alignItems: "center",
   },
   wordmark: {
-    position: 'absolute',
+    position: "absolute",
     left: 0,
     right: 0,
-    textAlign: 'center',
+    textAlign: "center",
     color: OUTLINE,
     fontSize: 72,
-    fontWeight: '900',
+    fontWeight: "900",
     letterSpacing: -1.44, // -2% of 72px (RN letter-spacing is absolute px)
   },
 });

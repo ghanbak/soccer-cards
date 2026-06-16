@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { AppState, Pressable, StyleSheet, View } from "react-native";
+import { AppState, Pressable, StyleSheet, View, Text } from "react-native";
 import Animated, {
   Easing,
   interpolateColor,
@@ -116,16 +116,12 @@ function CardScene() {
   return (
     <Animated.View style={[styles.root, backgroundStyle]}>
       <StatusBar style="dark" />
-      <View
-        style={[
-          styles.scene,
-          { paddingBottom: insets.bottom + STACK_BOTTOM_GAP },
-        ]}
-      >
+      <View style={[styles.scene]}>
         <Pressable
           onPress={toggle}
           accessibilityRole="button"
           accessibilityLabel={label}
+          style={{ height: 200 }}
         >
           <CardStack swap={swap} />
         </Pressable>

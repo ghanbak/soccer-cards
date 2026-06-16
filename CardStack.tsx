@@ -1,12 +1,12 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 import Animated, {
   interpolate,
   useAnimatedStyle,
   type SharedValue,
-} from 'react-native-reanimated';
+} from "react-native-reanimated";
 
-import { Card } from './Card';
-import { CARD_RED, CARD_YELLOW } from './colors';
+import { Card } from "./Card";
+import { CARD_RED, CARD_YELLOW } from "./colors";
 
 // Card-stack poses (degrees / px). The front card tilts left; the back card
 // fans out to the right and sits slightly lower — matching the mock.
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   stack: {
     width: STACK_W,
     height: STACK_H,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
