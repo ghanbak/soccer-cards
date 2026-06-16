@@ -25,26 +25,18 @@ Two independently-actionable deliverables bundled as "make Book 'Em launch-ready
 
 ---
 
-## ⚠️ Decisions to make before doing the work
+## ✅ Decisions (RESOLVED 2026-06-16)
 
-These are forks in the plan. Resolve them first — they change what the steps even are.
+1. **Apple 4.2 "minimum functionality" → Option B: submit the flasher as-is.**
+   We'll submit the one-screen flasher to public App Store review without building "The Book" counter first, and **see if it gets rejected**. If 4.2-rejected, fall back to either an appeal or shipping the counter and resubmitting (new build + version). Phase 2 proceeds now; the counter is *not* a prerequisite. **Accepted risk:** a pure red/yellow flasher is a real [4.2 rejection](https://developer.apple.com/app-store/review/guidelines/#minimum-functionality) candidate — budget for at least one rejection→resubmit round.
 
-1. **Apple 4.2 "minimum functionality" — do we ship the counter first?**
-   A pure red/yellow flasher is squarely in Apple's [4.2 rejection blast radius](https://developer.apple.com/app-store/review/guidelines/#minimum-functionality) for a *public* App Store release. (Internal/external TestFlight is not affected; **public review is**.) The roadmap mitigation is **"The Book" card counter (v1.1)** — real, retained functionality.
-   - **Option A (recommended):** ship "The Book" counter *before* public iOS review. Materially lowers rejection risk. Cost: build the feature first.
-   - **Option B:** submit the flasher as-is and absorb likely rejection + appeal/iterate. Faster to *attempt*, slower if rejected.
-   - This decision gates **Phase 2 (iOS)**. Android has no equivalent functionality bar, so Phase 3 can proceed regardless.
+2. **Google Play account = PERSONAL, created 2026-06-15 → 12-tester closed-testing gate APPLIES.**
+   The hard, time-boxed gate is in play (Phase 3). **Researched (2026-06-16):** an *open* beta **cannot** bypass or substitute for this — per [Google](https://support.google.com/googleplay/android-developer/answer/14151465), the qualifying test **must be closed** ("At least 12 testers must be opted-in to your **closed** test when you apply for production access"), and **"open testing is available [only] when you have production access."** So the open beta you wanted is itself locked behind this gate. Forced sequence: **closed test (≥12 testers, 14 continuous days) → apply for production access → granted → open testing + production unlock.**
 
-2. **Is the Google Play account *personal* or *organization*?** (Verify in Play Console → account details.)
-   - **Personal account created on/after 2023-11-13** → the **12-testers / 14-day closed-testing gate** applies (Phase 3). This is a *hard, time-boxed* blocker — plan ~2+ weeks of calendar time.
-   - **Organization account** → exempt; you can go straight from build to production access.
+3. **iPad support → DROP.** Set `ios.supportsTablet: false` in [app.json](../../app.json) (currently `true`). Removes the iPad screenshot set and a class of iPad review nits. **Action item folded into Phase 0.**
 
-3. **iPad support — keep or drop?** `app.json` sets `ios.supportsTablet: true`. Public App Store review will expect **iPad screenshots** and an iPad-correct layout.
-   - **Recommended:** set `supportsTablet: false` for v1 (the app is portrait-phone-shaped). Removes an entire screenshot set + a class of review nits. Flip back on later if desired.
-
-4. **App name lock-in.** Confirm **"Book 'Em"** is available as the *display name* on both stores (the bundle id is independent and already chosen). Have a fallback display name ready.
-
-Use the **AskUserQuestion**-style resolution at execution time; the rest of the plan assumes **A + (verify account type) + drop iPad** unless you decide otherwise.
+4. **Name → bundle id stays `com.ghanbak.bookem`; display name leaning "Book 'Em - World Cup Fan Cards".**
+   The **Android package name `com.ghanbak.bookem` is locked and unaffected** by the display name. ⚠️ **Trademark risk on "World Cup":** FIFA aggressively protects the "World Cup" mark; both Apple (Guideline 5.2 — IP) and Google reject app titles/metadata using it without authorization. **Recommend a non-infringing display name** (e.g., "Book 'Em - Soccer Fan Cards", "Book 'Em - Ref Cards") before creating the store records. Final display name still **TBD pending this trademark call.**
 
 ---
 
@@ -52,7 +44,9 @@ Use the **AskUserQuestion**-style resolution at execution time; the rest of the 
 
 **Goal:** a single `README.md` at repo root that explains what Book 'Em is, how to run it, and how it's built — useful to future-you, a collaborator, or a hiring reviewer.
 
-**Detail level: MINIMAL.** This is a content spec, not engineering.
+**✅ DONE (2026-06-16):** `README.md` is written, committed, and live — it covers the pitch, stack, run instructions (with the Expo-Go-needs-a-dev-client caveat), project layout, Biome/worktree tooling notes, privacy policy, and license. The structure below is kept only as the record of what shipped.
+
+**Detail level: MINIMAL.** This was a content spec, not engineering.
 
 ### Proposed `README.md` structure
 
@@ -108,14 +102,10 @@ Collects nothing, sends nothing. Policy: <privacy-policy URL>.
 See `LICENSE`.
 ```
 
-### Acceptance criteria — Part A
-- [ ] `README.md` exists at repo root, renders cleanly on GitHub.
-- [ ] One-line description + the "one screen, two states" pitch.
-- [ ] Accurate run instructions (`npm install`, `expo start`, `npm run ios/android`) **and** the Expo-Go-won't-work-for-native-modules caveat.
-- [ ] Stack list matches [package.json](../../package.json) (SDK 56, RN 0.85, Reanimated 4) — no version drift.
-- [ ] Mentions Biome (not ESLint) and that `expo lint` is not used (matches project tooling convention).
-- [ ] Links the privacy policy and `LICENSE`.
-- [ ] (Optional) embeds a yellow/red screenshot.
+### Acceptance criteria — Part A — ✅ all met
+- [x] `README.md` at repo root, renders on GitHub.
+- [x] Pitch, accurate run instructions + Expo-Go caveat, stack list matching [package.json](../../package.json), Biome/`expo lint` note, privacy + `LICENSE` links.
+- [ ] *(Open, unrelated)* `LICENSE` still carries Expo's template copyright — update the holder to your name before public launch.
 
 ---
 
@@ -138,8 +128,9 @@ Reuse the existing work; don't redo it. Public launch *requires* a working produ
 - [ ] Production build config verified — see [todo 001](../../todos/001-ready-p2-verify-production-build-config.md).
 - [ ] iOS submission pipeline (ASC app record, API key, `eas submit`) — see [todo 002](../../todos/002-ready-p1-ship-ios-testflight-internal.md). **Public launch reuses the same app record & key.**
 - [ ] Android submission pipeline (Play app, service account, AAB) — see [todo 003](../../todos/003-ready-p1-ship-android-play-internal.md).
-- [ ] Replace the **placeholders** in [eas.json](../../eas.json) `submit.production` (`ascAppId`, `ascApiKeyId`, `ascApiKeyIssuerId`; Android `serviceAccountKeyPath`) with real values. Secrets stay out of git (`./secrets/`).
-- [ ] Apply the **decisions** above to config: if dropping iPad, set `ios.supportsTablet: false` in `app.json`.
+- [ ] Replace the **placeholders** in [eas.json](../../eas.json) `submit.production` (`ascAppId`, `ascApiKeyId`, `ascApiKeyIssuerId`; Android `serviceAccountKeyPath`) with real values. (`ascApiKeyPath` already points at `./secrets/asc-api-key.p8` — leave it.)
+- [ ] **Verify secrets are gitignored before the first build** (hard gate): `git check-ignore secrets/asc-api-key.p8 secrets/play-service-account.json` passes, and `git log --all -- secrets/` shows nothing ever committed.
+- [ ] **Drop iPad** (Decision #3): set `ios.supportsTablet: false` in [app.json](../../app.json).
 
 ## Phase 1 — Shared listing assets
 
@@ -157,9 +148,9 @@ Builds on [todo 004](../../todos/004-ready-p2-store-listing-and-screenshots.md) 
 
 ## Phase 2 — iOS public App Store release
 
-> **Gated by Decision #1.** If shipping "The Book" counter first, build it before this phase.
+> **Decision #1 = Option B:** submit the flasher as-is; no counter prerequisite. Proceed, accepting the 4.2 rejection risk.
 
-- [ ] **Resolve App Review risk (4.2)** per Decision #1 (counter shipped, or accept rejection risk).
+- [ ] Confirm final **display name** (Decision #4 — avoid "World Cup" trademark) before creating/editing the App Store Connect record.
 - [ ] Bump **marketing version** if needed in `app.json` (`appVersionSource: remote` means EAS owns build number; the *marketing* version `1.0.0` is yours to set).
 - [ ] **Build + submit** a `production` build (same pipeline as TestFlight): `eas build -p ios --profile production` → `eas submit -p ios --profile production`. The public release uses the **same processed build** you can also TestFlight first.
 - [ ] In **App Store Connect → your app → [version] → "Prepare for Submission"**:
@@ -173,22 +164,21 @@ Builds on [todo 004](../../todos/004-ready-p2-store-listing-and-screenshots.md) 
 - [ ] **Handle the outcome**: if rejected (watch for 4.2), respond in Resolution Center / appeal, or ship the counter and resubmit (a new build + version).
 
 ### Acceptance criteria — iOS
-- [ ] App Store listing complete (copy, 6.9" screenshots, privacy, age rating, pricing).
-- [ ] 4.2 decision executed and recorded.
-- [ ] Build submitted for App Review; **Approved**; live (or ready to manually release).
+- [ ] App Store listing complete (final display name, copy, 6.9" screenshots, privacy, age rating, pricing).
+- [ ] Build submitted for App Review and **Approved** — *or* 4.2-rejected and a resubmit (new auto-incremented build; marketing version bumped only if the prior version already reached "Pending Developer Release"/live) logged.
 
 ## Phase 3 — Android public Google Play release
 
-> **⚠️ Gated by Decision #2 — the closed-testing gate.** For **personal accounts created on/after 2023-11-13**, Google requires a **closed test with ≥12 testers opted in for 14 continuous days** *before* you can apply for production access. **Internal testing does NOT count** — it must be the **Closed** track. Org accounts are exempt.
+> **⚠️ Decision #2 = gate APPLIES** (personal account, created 2026-06-15). Google requires a **closed test with ≥12 testers opted in for 14 continuous days** before you can apply for production access. **Internal testing does NOT count**, and **open testing can't substitute** (it's only unlocked *after* production access — [confirmed 2026-06-16](https://support.google.com/googleplay/android-developer/answer/14151465)). This is unavoidable calendar time (**~3 weeks** incl. the production-access review); **start it first / in parallel with iOS.**
 
-**If the 12-tester gate applies (personal account):**
+**The 12-tester closed-testing gate (required):**
 - [ ] Build the production **AAB** (`eas build -p android --profile production`) and promote/upload to the **Closed testing** track (not just internal). First upload may need a one-time manual AAB upload to accept Play App Signing — see [todo 003](../../todos/003-ready-p1-ship-android-play-internal.md) §E.
 - [ ] Recruit **≥12 testers**; add them to the closed-test email list / Google Group; share the opt-in link; confirm each **opts in**.
-- [ ] Keep the closed test running **14 continuous days** with those testers opted in. (Don't remove testers mid-window.)
+- [ ] Keep the closed test running **14 continuous days** with those testers opted in — and **keep the app installed**. The count must stay ≥12 across the trailing 14 days; if anyone uninstalls/opts out and you drop below 12, the window effectively resets. Don't remove testers mid-window.
 - [ ] After 14 days, **apply for production access** on the Play Console Dashboard; answer the readiness questionnaire (how you tested, feedback gathered).
-- [ ] Wait for Google to **grant production access**.
+- [ ] Wait for Google to **grant production access** — this is a **separate manual review that adds several days** on top of the 14. **Realistic floor: ~3 weeks**, not 2.
 
-**Then (all personal + org accounts):**
+**Then (after production access is granted):**
 - [ ] Complete the **full public store listing**: copy, ≥2 phone screenshots, **feature graphic 1024×500**, **512² icon**, category.
 - [ ] Complete **all** Policy → App content declarations (privacy policy URL, data safety = none, content rating/IARC, target audience, ads = none, app access) — drafted in [todo 003](../../todos/003-ready-p1-ship-android-play-internal.md) §G.
 - [ ] Create a **Production** release: upload/promote the AAB, add release notes.
@@ -196,7 +186,7 @@ Builds on [todo 004](../../todos/004-ready-p2-store-listing-and-screenshots.md) 
 - [ ] **Submit for review** → roll out.
 
 ### Acceptance criteria — Android
-- [ ] Account type verified; 12-tester gate satisfied **if** applicable (≥12 testers, 14-day window, production access granted).
+- [ ] Closed test ran ≥14 continuous days with ≥12 opted-in testers; **production access granted** (record the date).
 - [ ] Full public listing complete (copy, screenshots, feature graphic, 512² icon).
 - [ ] All App content declarations complete.
 - [ ] Production release reviewed and rolling out.
@@ -212,20 +202,13 @@ Builds on [todo 004](../../todos/004-ready-p2-store-listing-and-screenshots.md) 
 
 ---
 
-## SpecFlow notes — edge cases baked in
+## Critical path & residual risks
 
-- **Account-type branch** (personal vs org) changes Android from ~1 day to ~2+ weeks. Verify *first*.
-- **4.2 fork** changes whether iOS needs a feature build before submission.
-- **iPad screenshots** only required if `supportsTablet` stays true — flipping it removes work and review surface.
-- **Rejection loop**: an App Store rejection needs a *new build + new version* to resubmit; budget for at least one round.
-- **Secrets/2FA**: console steps need the owner's Apple/Google logins and are not headlessly automatable; the ASC `.p8` and Play service-account JSON must never be committed.
-- **First Play upload** quirk (manual AAB to accept Play App Signing) applies on the closed track too.
-- **Name/trademark**: "Book 'Em" availability is store-checked at app-record creation; have a fallback display name.
+The hard constraints are all captured in the Decisions and phases above; the only things to keep front-of-mind:
 
-## Risks
-- **Google 12-tester / 14-day gate is the critical-path blocker** for Android public launch on a personal account — it's calendar time you can't compress. Start it early, in parallel with iOS.
-- **Apple 4.2** is the critical-path risk for iOS — mitigate by shipping the counter.
-- Store **policies change**; re-verify screenshot sizes / Data safety / testing rules against the live consoles at execution time (this plan reflects mid-2026).
+- **Android closed-test gate is the long pole** (Decision #2) — ~3 weeks of uncompressible calendar time. **Start it first, in parallel with iOS.**
+- **Apple 4.2** (Decision #1, Option B) — expect a possible rejection; the fallback is appeal *or* ship "The Book" counter and resubmit (a new build + bumped marketing version). We are *not* building the counter pre-emptively.
+- **Store policies drift** — re-verify screenshot sizes / Data safety / testing rules against the live consoles at execution time (this plan reflects mid-2026).
 
 ## References (verify at execution time)
 - Internal-testing foundation: [internal-beta plan](2026-05-28-chore-testflight-play-internal-beta-plan.md) · todos [001](../../todos/001-ready-p2-verify-production-build-config.md)–[005](../../todos/005-pending-p3-external-public-beta-prep.md)
