@@ -21,13 +21,13 @@
   "submit": {
     "production": {
       "ios": {
-        "appleId": "ghanbak@gmail.com",
-        "ascAppId": "YOUR_ASC_APP_ID",
-        "appleTeamId": "YOUR_APPLE_TEAM_ID"
+        "appleId": "ghanbak@icloud.com",
+        "ascAppId": "6781078604",
+        "appleTeamId": "CFRQCUM2P9"
       },
       "android": {
         "serviceAccountKeyPath": "./secrets/play-service-account.json",
-        "track": "internal"
+        "track": "alpha"
       }
     }
   }

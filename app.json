@@ -12,7 +12,8 @@
       "bundleIdentifier": "com.ghanbak.bookem",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
-      }
+      },
+      "icon": "./assets/app.icon"
     },
     "android": {
       "package": "com.ghanbak.bookem",
