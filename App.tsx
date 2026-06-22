@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { AppState, StyleSheet, View } from "react-native";
+import { AppState, StyleSheet, useWindowDimensions, View } from "react-native";
 import Animated, {
   Easing,
   interpolateColor,
@@ -20,7 +20,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 
 import { AnimatedSplash } from "./AnimatedSplash";
-import { CardStack, type CardSide } from "./CardStack";
+import { CardStack, type CardSide, restingCenterY, STACK_H } from "./CardStack";
 import { CARD_RED, CARD_YELLOW } from "./colors";
 
 // Hold the native splash until the JS splash overlay is ready to take over.
@@ -70,6 +70,7 @@ function useMaxBrightness() {
 
 function CardScene() {
   const insets = useSafeAreaInsets();
+  const { height } = useWindowDimensions();
   const reduceMotion = useReducedMotion();
   const [card, setCard] = useState<CardSide>("yellow");
 
@@ -110,11 +111,17 @@ function CardScene() {
   return (
     <Animated.View style={[styles.root, backgroundStyle]}>
       <StatusBar style="dark" />
-      <View style={styles.scene}>
-        {/* Fixed-height slot preserves the resting position the splash hands off to. */}
-        <View style={styles.cardSlot}>
-          <CardStack swap={swap} onSelect={select} current={card} />
-        </View>
+      {/* Stack center sits at the shared restingCenterY — the same datum the splash
+          flies its cards to, so the handoff doesn't pop. Same parent box as the
+          splash wrapper (full width, centered). */}
+      <View
+        style={[
+          styles.stackHolder,
+          { top: restingCenterY(height, insets) - STACK_H / 2 },
+        ]}
+        pointerEvents="box-none"
+      >
+        <CardStack swap={swap} onSelect={select} current={card} />
       </View>
     </Animated.View>
   );
@@ -137,12 +144,10 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
-  scene: {
-    flex: 1,
+  stackHolder: {
+    position: "absolute",
+    left: 0,
+    right: 0,
     alignItems: "center",
-    justifyContent: "flex-end",
-  },
-  cardSlot: {
-    height: 200,
   },
 });

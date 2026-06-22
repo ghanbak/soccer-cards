@@ -12,7 +12,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { CardStack, STACK_BOTTOM_GAP, STACK_H } from "./CardStack";
+import { CardStack, restingCenterY, STACK_H } from "./CardStack";
 import { CARD_YELLOW, OUTLINE } from "./colors";
 
 const SPLASH_SCALE = 1.2; // cards start larger, shrink to 1.0 at rest
@@ -41,8 +41,10 @@ export function AnimatedSplash({
   // Stack center: from screen middle (splash) down to the app's resting spot,
   // computed from the same inputs CardScene uses.
   const splashCenterY = height * 0.4;
-  const restingCenterY = height - (STACK_H - 88) / 2;
-  const travel = restingCenterY - splashCenterY;
+  // Shared with the live app (App.tsx) so the cards fly to the exact spot the app
+  // renders them — the handoff datum lives in one place (CardStack.restingCenterY).
+  const restingCenter = restingCenterY(height, insets);
+  const travel = restingCenter - splashCenterY;
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: run-once mount effect — adding these deps would replay the splash fly-in.
   useEffect(() => {
