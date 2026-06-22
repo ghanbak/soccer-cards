@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { AppState, Pressable, StyleSheet, View, Text } from "react-native";
+import { AppState, StyleSheet, View } from "react-native";
 import Animated, {
   Easing,
   interpolateColor,
@@ -20,13 +20,11 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 
 import { AnimatedSplash } from "./AnimatedSplash";
-import { CardStack, STACK_BOTTOM_GAP } from "./CardStack";
+import { CardStack, type CardSide } from "./CardStack";
 import { CARD_RED, CARD_YELLOW } from "./colors";
 
 // Hold the native splash until the JS splash overlay is ready to take over.
 SplashScreen.preventAutoHideAsync().catch(() => {});
-
-type CardSide = "yellow" | "red";
 
 const BG_FADE_MS = 120;
 const BG_EASING = Easing.bezier(0.4, 0, 0.2, 1);
@@ -82,11 +80,12 @@ function CardScene() {
   useKeepAwake();
   useMaxBrightness();
 
-  const toggle = () => {
+  // Select a specific card. Idempotent: tapping the front card re-targets a value
+  // already at rest (no visible motion) — the medium haptic is its confirmation.
+  const select = (side: CardSide) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    const next: CardSide = card === "yellow" ? "red" : "yellow";
-    const target = next === "red" ? 1 : 0;
-    setCard(next);
+    setCard(side);
+    const target = side === "red" ? 1 : 0;
 
     if (reduceMotion) {
       swap.value = target;
@@ -108,23 +107,14 @@ function CardScene() {
     ),
   }));
 
-  const label =
-    card === "yellow"
-      ? "Yellow card. Tap to show red card."
-      : "Red card. Tap to show yellow card.";
-
   return (
     <Animated.View style={[styles.root, backgroundStyle]}>
       <StatusBar style="dark" />
-      <View style={[styles.scene]}>
-        <Pressable
-          onPress={toggle}
-          accessibilityRole="button"
-          accessibilityLabel={label}
-          style={{ height: 200 }}
-        >
-          <CardStack swap={swap} />
-        </Pressable>
+      <View style={styles.scene}>
+        {/* Fixed-height slot preserves the resting position the splash hands off to. */}
+        <View style={styles.cardSlot}>
+          <CardStack swap={swap} onSelect={select} current={card} />
+        </View>
       </View>
     </Animated.View>
   );
@@ -151,5 +141,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "flex-end",
+  },
+  cardSlot: {
+    height: 200,
   },
 });

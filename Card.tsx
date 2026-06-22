@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
 import Animated from 'react-native-reanimated';
 
 import { OUTLINE } from './colors';
@@ -8,16 +8,38 @@ import { OUTLINE } from './colors';
 export const CARD_W = 150;
 export const CARD_H = 210;
 
+// Animated so the touch target rides the same transform as the card's geometry.
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
 type CardProps = {
   color: string;
   // Animated transform/zIndex style produced by the parent card-stack.
   style: React.ComponentProps<typeof Animated.View>['style'];
+  // When provided, the card becomes a tappable button; otherwise it renders as a
+  // plain animated view. The splash reuses this component non-interactively, so
+  // omitting `onPress` keeps that render path byte-identical to before.
+  onPress?: () => void;
+  accessibilityLabel?: string;
+  // Reflected to assistive tech so the current front card is announced.
+  selected?: boolean;
 };
 
 // One referee card: a rounded rectangle with a thick dark outline and a soft shadow.
 // Purely presentational — all motion comes from the `style` the parent passes in.
-export function Card({ color, style }: CardProps) {
-  return <Animated.View style={[styles.card, { backgroundColor: color }, style]} />;
+export function Card({ color, style, onPress, accessibilityLabel, selected }: CardProps) {
+  const composedStyle = [styles.card, { backgroundColor: color }, style];
+  if (onPress) {
+    return (
+      <AnimatedPressable
+        style={composedStyle}
+        onPress={onPress}
+        accessibilityRole="button"
+        accessibilityLabel={accessibilityLabel}
+        accessibilityState={{ selected }}
+      />
+    );
+  }
+  return <Animated.View style={composedStyle} />;
 }
 
 const styles = StyleSheet.create({
