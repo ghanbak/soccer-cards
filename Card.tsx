@@ -20,13 +20,22 @@ type CardProps = {
   // omitting `onPress` keeps that render path byte-identical to before.
   onPress?: () => void;
   accessibilityLabel?: string;
+  // Describes the tap action (the label conveys state, not what tapping does).
+  accessibilityHint?: string;
   // Reflected to assistive tech so the current front card is announced.
   selected?: boolean;
 };
 
 // One referee card: a rounded rectangle with a thick dark outline and a soft shadow.
 // Purely presentational — all motion comes from the `style` the parent passes in.
-export function Card({ color, style, onPress, accessibilityLabel, selected }: CardProps) {
+export function Card({
+  color,
+  style,
+  onPress,
+  accessibilityLabel,
+  accessibilityHint,
+  selected,
+}: CardProps) {
   const composedStyle = [styles.card, { backgroundColor: color }, style];
   if (onPress) {
     return (
@@ -35,6 +44,7 @@ export function Card({ color, style, onPress, accessibilityLabel, selected }: Ca
         onPress={onPress}
         accessibilityRole="button"
         accessibilityLabel={accessibilityLabel}
+        accessibilityHint={accessibilityHint}
         accessibilityState={{ selected }}
       />
     );

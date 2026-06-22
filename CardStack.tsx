@@ -84,6 +84,7 @@ export function CardStack({
         style={yellowStyle}
         onPress={onSelect && (() => onSelect("yellow"))}
         accessibilityLabel="Yellow card"
+        accessibilityHint="Shows the yellow card"
         selected={current === "yellow"}
       />
       <Card
@@ -91,6 +92,7 @@ export function CardStack({
         style={redStyle}
         onPress={onSelect && (() => onSelect("red"))}
         accessibilityLabel="Red card"
+        accessibilityHint="Shows the red card"
         selected={current === "red"}
       />
     </Animated.View>
