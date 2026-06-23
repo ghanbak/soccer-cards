@@ -1,13 +1,15 @@
-import { FlexWidget } from "react-native-android-widget";
+import { FlexWidget, ImageWidget } from "react-native-android-widget";
 
 import type { CardSide } from "../../CardStack";
-import { CARD_RED, CARD_YELLOW, OUTLINE } from "../../colors";
+import { CARD_RED, CARD_YELLOW } from "../../colors";
 
-// Android home-screen widget face for one card — matched to the iOS widget and the
-// app's active state: a rounded card with the dark #363636 outline (Card.tsx:
-// borderRadius 22, borderWidth 4), inset on a full-bleed background of the same
-// colour. Tapping opens bookem://<side> (cardLink.ts → select). Unlike the iOS
-// 'widget' layout, this renders in the normal JS task, so the palette imports work.
+// The fanned two-card brand logo (same asset as the app icon) centered on a
+// full-bleed background of the card's colour — so the yellow widget reads as the
+// yellow card brought forward, the red widget as the red. Tapping opens
+// bookem://<side> (cardLink.ts → select). FlexWidget can't rotate views, so the
+// fan is baked into the (transparent) PNG.
+const LOGO = require("../../assets/android-icon-foreground.png");
+
 export function CardAndroidWidget({ side }: { side: CardSide }) {
   const cardColor = side === "red" ? CARD_RED : CARD_YELLOW;
   return (
@@ -22,19 +24,9 @@ export function CardAndroidWidget({ side }: { side: CardSide }) {
         alignItems: "center",
         backgroundColor: cardColor,
         borderRadius: 28,
-        padding: 12,
       }}
     >
-      <FlexWidget
-        style={{
-          height: "match_parent",
-          width: "match_parent",
-          backgroundColor: cardColor,
-          borderWidth: 4,
-          borderColor: OUTLINE,
-          borderRadius: 18,
-        }}
-      />
+      <ImageWidget image={LOGO} imageWidth={150} imageHeight={150} />
     </FlexWidget>
   );
 }
