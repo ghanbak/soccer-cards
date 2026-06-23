@@ -72,21 +72,21 @@
               "name": "YellowCard",
               "label": "Yellow Card",
               "description": "Tap to pull up a yellow card.",
-              "minWidth": "80dp",
-              "minHeight": "80dp",
-              "targetCellWidth": 1,
-              "targetCellHeight": 1,
-              "resizeMode": "none"
+              "minWidth": "110dp",
+              "minHeight": "110dp",
+              "targetCellWidth": 2,
+              "targetCellHeight": 2,
+              "resizeMode": "horizontal|vertical"
             },
             {
               "name": "RedCard",
               "label": "Red Card",
               "description": "Tap to pull up a red card.",
-              "minWidth": "80dp",
-              "minHeight": "80dp",
-              "targetCellWidth": 1,
-              "targetCellHeight": 1,
-              "resizeMode": "none"
+              "minWidth": "110dp",
+              "minHeight": "110dp",
+              "targetCellWidth": 2,
+              "targetCellHeight": 2,
+              "resizeMode": "horizontal|vertical"
             }
           ]
         }
