@@ -1,45 +1,63 @@
-import { Spacer, Text, VStack } from "@expo/ui/swift-ui";
+import { HStack, RoundedRectangle, Text, ZStack } from "@expo/ui/swift-ui";
 import {
   containerBackground,
   font,
   foregroundStyle,
   frame,
+  shadow,
   widgetURL,
 } from "@expo/ui/swift-ui/modifiers";
 import { createWidget, type WidgetEnvironment } from "expo-widgets";
 
-import { CARD_RED } from "../colors";
-
-// Tapping the widget opens the app on the red card via bookem://red (routed by
-// cardLink.ts → select). On the Home Screen the whole tile fills red; on the Lock
-// Screen the system renders it monochrome, so the "RED" label — not colour — is
-// what distinguishes the cards (this also covers colourblind users).
+// Tapping opens the app on the red card (bookem://red, routed by cardLink.ts).
 //
-// Static widget: no props, so it renders from WidgetKit's default timeline entry
-// without the app ever calling updateSnapshot().
+// Colours are INLINED, not imported: the 'widget' directive compiles this function
+// into a constrained layout context that can't see module-scope imports (referencing
+// `CARD_RED` from ../colors threw "Can't find variable"). Kept in sync with
+// ../colors by hand: CARD_RED #FF0000, OUTLINE #363636.
 const RedCardWidget = (_props: object, environment: WidgetEnvironment) => {
   "widget";
-  const accessory = environment.widgetFamily.startsWith("accessory");
+  const CARD = "#FF0000";
+  const OUTLINE = "#363636";
+
+  // Lock Screen accessory: rendered monochrome/tinted, so colour can't tell the
+  // cards apart — a small card glyph + "RED" label does.
+  if (environment.widgetFamily.startsWith("accessory")) {
+    return (
+      <HStack spacing={6} modifiers={[widgetURL("bookem://red")]}>
+        <RoundedRectangle
+          cornerRadius={4}
+          modifiers={[foregroundStyle(CARD), frame({ width: 22, height: 30 })]}
+        />
+        <Text modifiers={[font({ weight: "bold", size: 17 })]}>RED</Text>
+      </HStack>
+    );
+  }
+
+  // Home Screen: mirror the app's active state — a portrait rounded card with the
+  // dark outline, on a full-bleed background of the same colour. The outline shows
+  // as the gap between the dark backing rect and the slightly smaller card rect.
   return (
-    <VStack
-      spacing={0}
+    <ZStack
       modifiers={[
         widgetURL("bookem://red"),
-        containerBackground(CARD_RED, "widget"),
+        containerBackground(CARD, "widget"),
         frame({ maxWidth: Infinity, maxHeight: Infinity }),
       ]}
     >
-      <Spacer />
-      <Text
+      <RoundedRectangle
+        cornerRadius={22}
         modifiers={[
-          font({ weight: "bold", size: accessory ? 15 : 22 }),
-          foregroundStyle("#FFFFFF"),
+          foregroundStyle(OUTLINE),
+          frame({ width: 96, height: 126 }),
+          shadow({ radius: 6 }),
         ]}
-      >
-        RED
-      </Text>
-      <Spacer />
-    </VStack>
+      />
+      <RoundedRectangle
+        cornerRadius={18}
+        modifiers={[foregroundStyle(CARD), frame({ width: 88, height: 118 })]}
+      />
+    </ZStack>
   );
 };
 
