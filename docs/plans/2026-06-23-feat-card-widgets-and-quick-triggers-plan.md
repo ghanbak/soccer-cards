@@ -283,11 +283,12 @@ scheme reliably).
 - [ ] **On-device verification** (needs a dev build — `npx expo run:ios` / `run:android`): `npx uri-scheme open bookem://red --ios` and `--android` across cold / warm / app-open-on-other-card; confirm no yellow→red flash on cold start (frame-by-frame recording per AC1).
 - **Deliverable:** deep links work end-to-end with zero native targets; also unlocks Siri Shortcuts / the Shortcuts app for free. ACs 1–4, 7, 8 (AC1/AC3 logic verified statically; on-device pending).
 
-### Phase 1 — iOS widgets (`expo-widgets`)
-- [ ] Install + plugin; scaffold the widget extension; reproducible from clean prebuild (+ idempotent on a second prebuild).
-- [ ] Yellow + red widgets: accessory (lock screen) + small/medium (home); glyph + label; `widgetURL` deep-link. No App Group.
-- [ ] EAS build with the extra target; `CFBundleVersion` parity.
-- **Deliverable:** iOS home + lock-screen widgets (lock-screen tap unlocks-then-opens, documented). This is the iOS lock-screen access path.
+### Phase 1 — iOS widgets (`expo-widgets`) — ✅ implemented (native build verify pending)
+- [x] Installed `expo-widgets` + `@expo/ui` (~56.0.18); configured the plugin in [app.json](app.json) with two widgets (YellowCardWidget, RedCardWidget). Config validated via `expo config --type introspect` (exit 0; generates target `com.ghanbak.bookem.ExpoWidgetsTarget`).
+- [x] Yellow + red widgets ([widgets/YellowCardWidget.tsx](widgets/YellowCardWidget.tsx), [widgets/RedCardWidget.tsx](widgets/RedCardWidget.tsx)): `systemSmall` + `systemMedium` (home) + `accessoryRectangular` (lock screen); whole-tile colour fill + bold "YELLOW"/"RED" label (the monochrome/colourblind differentiator); `widgetURL("bookem://yellow|red")` deep-link. Static (no props) → renders from WidgetKit's default timeline entry, no `updateSnapshot` needed.
+- [x] **Correction to earlier "no App Group":** `expo-widgets` *requires* an app group (shared container for layout/timeline storage) and the plugin auto-creates `group.com.ghanbak.bookem` + the EAS `appExtensions` block. This is intrinsic and auto-managed — distinct from the deferred *manual* counter app-group. The EAS App-Group provisioning friction (first build interactive; #40851) now applies to v1; `CFBundleVersion` parity across app + widget still required.
+- [ ] **Native build verification** (needs Xcode — `npx expo prebuild -p ios && npx expo run:ios`): widgets appear in the gallery, render yellow/red + label, and tapping opens the app on the right card (lock-screen tap unlocks-then-opens). Skipped `accessoryCircular`/`accessoryInline` (a readable word won't fit a circle / inline is text-only).
+- **Deliverable:** iOS home + lock-screen widgets. This is the iOS lock-screen access path.
 
 ### Phase 2 — Android home-screen widgets (`react-native-android-widget`)
 - [ ] Verify peer dep vs SDK 56; install + plugin.

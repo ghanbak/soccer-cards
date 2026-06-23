@@ -34,6 +34,35 @@
           "image": "./assets/splash-logo.png",
           "imageWidth": 1
         }
+      ],
+      [
+        "expo-widgets",
+        {
+          "widgets": [
+            {
+              "name": "YellowCardWidget",
+              "displayName": "Yellow Card",
+              "description": "Tap to pull up a yellow card.",
+              "contentMarginsDisabled": true,
+              "supportedFamilies": [
+                "systemSmall",
+                "systemMedium",
+                "accessoryRectangular"
+              ]
+            },
+            {
+              "name": "RedCardWidget",
+              "displayName": "Red Card",
+              "description": "Tap to pull up a red card.",
+              "contentMarginsDisabled": true,
+              "supportedFamilies": [
+                "systemSmall",
+                "systemMedium",
+                "accessoryRectangular"
+              ]
+            }
+          ]
+        }
       ]
     ],
     "extra": {
