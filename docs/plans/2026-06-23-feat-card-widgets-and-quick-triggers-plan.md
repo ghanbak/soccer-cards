@@ -378,8 +378,7 @@ Explicitly **not** in v1 (cut after review):
   experimental dep + App Group/EAS provisioning friction). Add as the first
   fast-follow if usage shows the lock-screen case is real. *This is the trigger to
   introduce `@bacons/apple-targets`.*
-- **Android app shortcuts** (long-press launcher) — near-free static `shortcuts.xml`,
-  but unlocked-launcher only and competes with the app icon. Low ROL for v1.
+- ~~**Android app shortcuts** (long-press launcher)~~ — ✅ **done** (added after the widgets): config plugin [plugins/withAppShortcuts.js](plugins/withAppShortcuts.js) writes a static `shortcuts.xml` (Flash Yellow / Flash Red) with `ACTION_VIEW` `bookem://` intents → `MainActivity`, plus string resources, a shortcut icon, and the `android.app.shortcuts` meta-data. `expo prebuild -p android --clean` (exit 0) generates all of it. Gradle build/on-device (long-press icon) is the remaining verify.
 - **App Group + "The Book" counter integration** — add the App Group entitlement
   *in the PR that needs it* (when a widget must render a live count), not before.
   Avoids the provisioning friction (expo/expo #40851) for an unused entitlement.
