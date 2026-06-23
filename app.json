@@ -92,7 +92,8 @@
         }
       ],
       "./plugins/withQuickSettingsTiles",
-      "./plugins/withAppShortcuts"
+      "./plugins/withAppShortcuts",
+      "./plugins/withAndroidWorkManagerFix"
     ],
     "extra": {
       "eas": {
