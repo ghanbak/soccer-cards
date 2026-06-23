@@ -50,7 +50,10 @@ const YellowCardWidget = (_props: object, environment: WidgetEnvironment) => {
         modifiers={[
           foregroundStyle(OUTLINE),
           frame({ width: 96, height: 126 }),
-          shadow({ radius: 6 }),
+          // Soft black shadow offset downward, matching the app card
+          // (Card.tsx: #000 @ ~0.18, radius 12, y 6). Without an explicit
+          // colour the shadow renders as a white halo.
+          shadow({ radius: 8, x: 0, y: 4, color: "#0000002E" }),
         ]}
       />
       <RoundedRectangle
