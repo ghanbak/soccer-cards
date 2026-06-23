@@ -290,9 +290,11 @@ scheme reliably).
 - [ ] **Native build verification** (needs Xcode — `npx expo prebuild -p ios && npx expo run:ios`): widgets appear in the gallery, render yellow/red + label, and tapping opens the app on the right card (lock-screen tap unlocks-then-opens). Skipped `accessoryCircular`/`accessoryInline` (a readable word won't fit a circle / inline is text-only).
 - **Deliverable:** iOS home + lock-screen widgets. This is the iOS lock-screen access path.
 
-### Phase 2 — Android home-screen widgets (`react-native-android-widget`)
-- [ ] Verify peer dep vs SDK 56; install + plugin.
-- [ ] Yellow + red widgets (glyph + label), `OPEN_URI` → `bookem://…`.
+### Phase 2 — Android home-screen widgets (`react-native-android-widget`) — ✅ implemented (native build verify pending)
+- [x] Installed `react-native-android-widget@0.20.3` (peer `expo>=54` → SDK 56 OK). **Needed `--legacy-peer-deps`** (an `@expo/ui` optional `react-dom` peer wants react>19.2.3); added [.npmrc](.npmrc) `legacy-peer-deps=true` so EAS + worktree installs stay reproducible.
+- [x] Yellow + red widgets ([widgets/android/CardAndroidWidget.tsx](widgets/android/CardAndroidWidget.tsx)): full colour fill + bold "YELLOW"/"RED" label, `clickAction="OPEN_URI"` → `bookem://yellow|red`, `accessibilityLabel`. Task handler ([widgets/android/widgetTaskHandler.tsx](widgets/android/widgetTaskHandler.tsx)) maps widget name → face; registered in [index.ts](index.ts) guarded to `Platform.OS === "android"`. Plugin configured in [app.json](app.json) (widgets `YellowCard`/`RedCard`).
+- [x] Clean `npx expo prebuild --clean` (exit 0, both platforms): generates Android receivers `.widget.YellowCard`/`.widget.RedCard` + provider XMLs, and iOS `ExpoWidgetsTarget/` — **AC10 validated**.
+- [ ] **Native build verification**: `npx expo run:android` on a device/emulator; long-press home → add Yellow/Red widget; tap opens the app on the right card.
 - **Deliverable:** Android home-screen widgets.
 
 ### Phase 3 — Android Quick Settings tiles (lock-screen access)
