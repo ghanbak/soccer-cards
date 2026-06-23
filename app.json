@@ -90,7 +90,8 @@
             }
           ]
         }
-      ]
+      ],
+      "./plugins/withQuickSettingsTiles"
     ],
     "extra": {
       "eas": {

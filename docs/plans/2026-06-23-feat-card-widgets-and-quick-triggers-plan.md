@@ -297,11 +297,12 @@ scheme reliably).
 - [ ] **Native build verification**: `npx expo run:android` on a device/emulator; long-press home → add Yellow/Red widget; tap opens the app on the right card.
 - **Deliverable:** Android home-screen widgets.
 
-### Phase 3 — Android Quick Settings tiles (lock-screen access)
-- [ ] Custom config plugin: two `<service>` entries + two Kotlin `TileService`s.
-- [ ] `isSecure()` → `unlockAndRun`; decide `showWhenLocked` strategy (whole activity vs trampoline); pin `startActivityAndCollapse` overload.
-- [ ] Both tiles addable with distinct icons/labels; reachable by pulling the shade over the keyguard.
-- **Deliverable:** Android lock-screen access. *(If the Kotlin plugin proves troublesome, fall back to the `expo-notifications` Yellow/Red action notification.)*
+### Phase 3 — Android Quick Settings tiles (lock-screen access) — ✅ implemented (Gradle build verify pending)
+- [x] Custom config plugin [plugins/withQuickSettingsTiles.js](plugins/withQuickSettingsTiles.js) (registered in [app.json](app.json)): writes a shared `CardTileService` + `YellowCardTileService`/`RedCardTileService` Kotlin + a monochrome `ic_card_tile` drawable, and injects two `<service>` manifest entries (`QS_TILE` filter + `BIND_QUICK_SETTINGS_TILE` permission + icon/label).
+- [x] `onClick` opens `bookem://yellow|red` via `ACTION_VIEW` → routes to `MainActivity` (already has the scheme filter); `isLocked` → `unlockAndRun {}`; `startActivityAndCollapse` overload pinned (PendingIntent on API 34+, deprecated Intent overload below). **`showWhenLocked` decision: NOT set** — taps gate on unlock anyway, so the card shows after unlock without changing every launch.
+- [x] `expo prebuild -p android --clean` (exit 0) generates both tiles + manifest entries with distinct labels (Yellow Card / Red Card), shared card-glyph icon.
+- [ ] **Gradle build verification** (`npx expo run:android`): add each tile from the QS edit tray; pull the shade over the keyguard → tap → unlock → app opens on the right card.
+- **Deliverable:** Android lock-screen access. *(Fallback if the Kotlin plugin regresses: the `expo-notifications` Yellow/Red action notification — zero native code.)*
 
 ### Phase 4 — Polish, accessibility
 - [ ] VoiceOver / TalkBack labels on every surface ("Flash yellow card").
