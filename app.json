@@ -34,7 +34,66 @@
           "image": "./assets/splash-logo.png",
           "imageWidth": 1
         }
-      ]
+      ],
+      [
+        "expo-widgets",
+        {
+          "widgets": [
+            {
+              "name": "YellowCardWidget",
+              "displayName": "Yellow Card",
+              "description": "Tap to pull up a yellow card.",
+              "contentMarginsDisabled": true,
+              "supportedFamilies": [
+                "systemSmall",
+                "systemMedium",
+                "accessoryRectangular"
+              ]
+            },
+            {
+              "name": "RedCardWidget",
+              "displayName": "Red Card",
+              "description": "Tap to pull up a red card.",
+              "contentMarginsDisabled": true,
+              "supportedFamilies": [
+                "systemSmall",
+                "systemMedium",
+                "accessoryRectangular"
+              ]
+            }
+          ]
+        }
+      ],
+      [
+        "react-native-android-widget",
+        {
+          "widgets": [
+            {
+              "name": "YellowCard",
+              "label": "Yellow Card",
+              "description": "Tap to pull up a yellow card.",
+              "minWidth": "110dp",
+              "minHeight": "110dp",
+              "targetCellWidth": 2,
+              "targetCellHeight": 2,
+              "resizeMode": "horizontal|vertical"
+            },
+            {
+              "name": "RedCard",
+              "label": "Red Card",
+              "description": "Tap to pull up a red card.",
+              "minWidth": "110dp",
+              "minHeight": "110dp",
+              "targetCellWidth": 2,
+              "targetCellHeight": 2,
+              "resizeMode": "horizontal|vertical"
+            }
+          ]
+        }
+      ],
+      "./plugins/withQuickSettingsTiles",
+      "./plugins/withAppShortcuts",
+      "./plugins/withAndroidWorkManagerFix"
     ],
     "extra": {
       "eas": {
