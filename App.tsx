@@ -23,6 +23,7 @@ import { AnimatedSplash } from "./AnimatedSplash";
 import { initialCard, useDeepLinkSelect } from "./cardLink";
 import { CardStack, type CardSide, restingCenterY, STACK_H } from "./CardStack";
 import { CARD_RED, CARD_YELLOW } from "./colors";
+import { registerWidgets } from "./registerWidgets";
 
 // Hold the native splash until the JS splash overlay is ready to take over.
 SplashScreen.preventAutoHideAsync().catch(() => {});
@@ -138,6 +139,12 @@ function CardScene() {
 
 export default function App() {
   const [splashDone, setSplashDone] = useState(false);
+
+  // Register the iOS widgets' layouts into the shared container so WidgetKit can
+  // render them (no-op on Android). Runs once after the app mounts.
+  useEffect(() => {
+    registerWidgets();
+  }, []);
 
   return (
     <SafeAreaProvider>
