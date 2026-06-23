@@ -1,35 +1,38 @@
-import { FlexWidget, TextWidget } from "react-native-android-widget";
+import { FlexWidget } from "react-native-android-widget";
 
 import type { CardSide } from "../../CardStack";
 import { CARD_RED, CARD_YELLOW, OUTLINE } from "../../colors";
 
-// Android home-screen widget face for one card. The whole tile is the card colour
-// and a bold "YELLOW"/"RED" label keeps the two distinguishable for colourblind
-// users. Tapping opens bookem://<side>, routed by cardLink.ts → select. (Android
-// has no dependable lock-screen widget in 2026; the Quick Settings tile is the
-// lock-screen path — this is the home-screen surface.)
+// Android home-screen widget face for one card — matched to the iOS widget and the
+// app's active state: a rounded card with the dark #363636 outline (Card.tsx:
+// borderRadius 22, borderWidth 4), inset on a full-bleed background of the same
+// colour. Tapping opens bookem://<side> (cardLink.ts → select). Unlike the iOS
+// 'widget' layout, this renders in the normal JS task, so the palette imports work.
 export function CardAndroidWidget({ side }: { side: CardSide }) {
-  const isRed = side === "red";
+  const cardColor = side === "red" ? CARD_RED : CARD_YELLOW;
   return (
     <FlexWidget
       clickAction="OPEN_URI"
       clickActionData={{ uri: `bookem://${side}` }}
-      accessibilityLabel={isRed ? "Show red card" : "Show yellow card"}
+      accessibilityLabel={side === "red" ? "Show red card" : "Show yellow card"}
       style={{
         height: "match_parent",
         width: "match_parent",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: isRed ? CARD_RED : CARD_YELLOW,
-        borderRadius: 16,
+        backgroundColor: cardColor,
+        borderRadius: 28,
+        padding: 12,
       }}
     >
-      <TextWidget
-        text={isRed ? "RED" : "YELLOW"}
+      <FlexWidget
         style={{
-          fontSize: 22,
-          fontWeight: "bold",
-          color: isRed ? "#FFFFFF" : OUTLINE,
+          height: "match_parent",
+          width: "match_parent",
+          backgroundColor: cardColor,
+          borderWidth: 4,
+          borderColor: OUTLINE,
+          borderRadius: 18,
         }}
       />
     </FlexWidget>
