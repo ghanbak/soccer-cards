@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { AppState, Pressable, StyleSheet, View, Text } from "react-native";
+import { AppState, StyleSheet, useWindowDimensions, View } from "react-native";
 import Animated, {
   Easing,
   interpolateColor,
@@ -20,13 +20,11 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 
 import { AnimatedSplash } from "./AnimatedSplash";
-import { CardStack, STACK_BOTTOM_GAP } from "./CardStack";
+import { CardStack, type CardSide, restingCenterY, STACK_H } from "./CardStack";
 import { CARD_RED, CARD_YELLOW } from "./colors";
 
 // Hold the native splash until the JS splash overlay is ready to take over.
 SplashScreen.preventAutoHideAsync().catch(() => {});
-
-type CardSide = "yellow" | "red";
 
 const BG_FADE_MS = 120;
 const BG_EASING = Easing.bezier(0.4, 0, 0.2, 1);
@@ -72,6 +70,7 @@ function useMaxBrightness() {
 
 function CardScene() {
   const insets = useSafeAreaInsets();
+  const { height } = useWindowDimensions();
   const reduceMotion = useReducedMotion();
   const [card, setCard] = useState<CardSide>("yellow");
 
@@ -82,11 +81,12 @@ function CardScene() {
   useKeepAwake();
   useMaxBrightness();
 
-  const toggle = () => {
+  // Select a specific card. Idempotent: tapping the front card re-targets a value
+  // already at rest (no visible motion) — the medium haptic is its confirmation.
+  const select = (side: CardSide) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    const next: CardSide = card === "yellow" ? "red" : "yellow";
-    const target = next === "red" ? 1 : 0;
-    setCard(next);
+    setCard(side);
+    const target = side === "red" ? 1 : 0;
 
     if (reduceMotion) {
       swap.value = target;
@@ -108,23 +108,20 @@ function CardScene() {
     ),
   }));
 
-  const label =
-    card === "yellow"
-      ? "Yellow card. Tap to show red card."
-      : "Red card. Tap to show yellow card.";
-
   return (
     <Animated.View style={[styles.root, backgroundStyle]}>
       <StatusBar style="dark" />
-      <View style={[styles.scene]}>
-        <Pressable
-          onPress={toggle}
-          accessibilityRole="button"
-          accessibilityLabel={label}
-          style={{ height: 200 }}
-        >
-          <CardStack swap={swap} />
-        </Pressable>
+      {/* Stack center sits at the shared restingCenterY — the same datum the splash
+          flies its cards to, so the handoff doesn't pop. Same parent box as the
+          splash wrapper (full width, centered). */}
+      <View
+        style={[
+          styles.stackHolder,
+          { top: restingCenterY(height, insets) - STACK_H / 2 },
+        ]}
+        pointerEvents="box-none"
+      >
+        <CardStack swap={swap} onSelect={select} current={card} />
       </View>
     </Animated.View>
   );
@@ -147,9 +144,10 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
-  scene: {
-    flex: 1,
+  stackHolder: {
+    position: "absolute",
+    left: 0,
+    right: 0,
     alignItems: "center",
-    justifyContent: "flex-end",
   },
 });
