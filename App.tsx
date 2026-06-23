@@ -20,6 +20,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 
 import { AnimatedSplash } from "./AnimatedSplash";
+import { initialCard, useDeepLinkSelect } from "./cardLink";
 import { CardStack, type CardSide, restingCenterY, STACK_H } from "./CardStack";
 import { CARD_RED, CARD_YELLOW } from "./colors";
 
@@ -72,11 +73,15 @@ function CardScene() {
   const insets = useSafeAreaInsets();
   const { height } = useWindowDimensions();
   const reduceMotion = useReducedMotion();
-  const [card, setCard] = useState<CardSide>("yellow");
+  // Cold-start seed: if a deep link (widget, tile, Shortcut) launched the app,
+  // start on that card so there's no yellow→red flash before first paint. Read
+  // synchronously via initialCard() so the lazy initializer runs exactly once.
+  const [card, setCard] = useState<CardSide>(initialCard);
 
-  // 0 = yellow in front (initial), 1 = red in front. Decoupled from color identity.
-  const swap = useSharedValue(0);
-  const color = useSharedValue(0);
+  // 0 = yellow in front, 1 = red in front. Decoupled from color identity. Seeded
+  // from the launch card on the first render (useSharedValue keeps the first arg).
+  const swap = useSharedValue(card === "red" ? 1 : 0);
+  const color = useSharedValue(card === "red" ? 1 : 0);
 
   useKeepAwake();
   useMaxBrightness();
@@ -99,6 +104,10 @@ function CardScene() {
       });
     }
   };
+
+  // Route warm/foreground `bookem://yellow|red` links into the same select path.
+  // Cold start is handled by the initialCard() seed above.
+  useDeepLinkSelect(select);
 
   const backgroundStyle = useAnimatedStyle(() => ({
     backgroundColor: interpolateColor(
