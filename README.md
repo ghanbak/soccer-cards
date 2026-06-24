@@ -69,14 +69,25 @@ version).
 
 ### Cutting a release
 
-```bash
-npm version patch          # 1.0.0 → 1.0.1 in package.json, commits + tags v1.0.1
-                           # (minor → 1.1.0, major → 2.0.0)
-git push --follow-tags     # push the commit and the tag
+**1. Bump the user-facing version** — pick one:
 
-eas build  --profile production --platform all                  # or ios / android
-eas submit --profile production --platform ios   --latest       # → App Store / TestFlight
-eas submit --profile production --platform android --latest     # → Play "alpha" (closed) track
+```bash
+npm version patch          # 1.0.0 → 1.0.1
+npm version minor          # 1.0.0 → 1.1.0
+npm version major          # 1.0.0 → 2.0.0
+```
+
+`npm version` updates `package.json`, commits it, and creates a matching git tag
+(e.g. `v1.0.1`).
+
+**2. Push, build, and submit:**
+
+```bash
+npm version patch          # 1.0.0 → 1.0.1 in package.json, commits it, tags v1.0.1
+git push --follow-tags     # push the commit + the tag
+eas build --profile production --platform all
+eas submit --platform ios --profile production --latest        # interactive 1st time (App Group)
+eas submit --platform android --profile production --latest    # → alpha/closed track
 ```
 
 Notes:
