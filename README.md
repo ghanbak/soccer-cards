@@ -41,7 +41,7 @@ npm run android       # build & run on an Android emulator/device
 | `Card.tsx` | A single card |
 | `AnimatedSplash.tsx` | JS splash overlay (fly-down) shown over the native splash |
 | `colors.ts` | Locked palette — `CARD_YELLOW`, `CARD_RED`, `OUTLINE` |
-| `app.json` / `eas.json` | Expo app config and EAS build/submit profiles |
+| `app.json` / `app.config.js` / `eas.json` | Expo app config (version sourced from `package.json`) and EAS build/submit profiles |
 
 ## Tooling notes
 
@@ -52,10 +52,45 @@ npm run android       # build & run on an Android emulator/device
 
 EAS profiles live in [`eas.json`](eas.json). Release runbooks are in [`docs/plans/`](docs/plans/).
 
+### Versioning
+
+Two separate numbers, managed in two different places:
+
+- **User-facing version** (`1.0.1`, the store "version train") — sourced from
+  `package.json` via [`app.config.js`](app.config.js). Bump it with `npm version`.
+- **Build numbers** (iOS `buildNumber` / Android `versionCode`) — auto-incremented
+  by EAS on every build (`autoIncrement` in `eas.json`, `appVersionSource: remote`).
+  Never set these by hand.
+
+You only ever bump the user-facing version, and only when cutting a release. One
+version = one App Store version train: once you've submitted `1.0.1`, the next
+release is `1.0.2` (App Store Connect rejects a new build under an already-used
+version).
+
+### Cutting a release
+
 ```bash
-eas build  --profile production --platform ios   # or android
-eas submit --profile production --platform ios   # or android
+npm version patch          # 1.0.0 → 1.0.1 in package.json, commits + tags v1.0.1
+                           # (minor → 1.1.0, major → 2.0.0)
+git push --follow-tags     # push the commit and the tag
+
+eas build  --profile production --platform all                  # or ios / android
+eas submit --profile production --platform ios   --latest       # → App Store / TestFlight
+eas submit --profile production --platform android --latest     # → Play "alpha" (closed) track
 ```
+
+Notes:
+
+- **iOS, first build of a release must be interactive** (`eas build --platform ios`
+  in a terminal, sign in to Apple). The widget extension's App Group
+  (`group.com.ghanbak.bookem`) needs Apple-cookies auth to register; the App Store
+  Connect API key can't assign App Groups.
+- **Android submits to the `alpha` (closed) track** (set in `eas.json`). This feeds
+  the personal-account 12-tester / 14-day closed-testing gate and does **not** reset
+  its clock — keep ≥12 testers opted in. Requires
+  `secrets/play-service-account.json` (gitignored).
+- `npm version` needs a clean working tree and does **not** run `postinstall`
+  (`patch-package`), so it has no install side effects.
 
 ## Privacy
 
