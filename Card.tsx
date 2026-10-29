@@ -8,6 +8,15 @@ import { OUTLINE } from './colors';
 export const CARD_W = 160;
 export const CARD_H = 204;
 
+// Outline thickness. The outline is NOT a CALayer border: under rotation Core
+// Animation leaves a border's INNER edge aliased (the outer silhouette is covered
+// by UIViewEdgeAntialiasing, the inner one is not). Instead we stack a dark box and
+// a smaller colour fill, so both visible edges are layer silhouettes — which the
+// edge-antialiasing flag does smooth. Mirrors the iOS widget (RedCardWidget.tsx).
+const OUTLINE_W = 4;
+const OUTER_RADIUS = 22;
+const INNER_RADIUS = OUTER_RADIUS - OUTLINE_W; // concentric corners
+
 // Animated so the touch target rides the same transform as the card's geometry.
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -36,7 +45,10 @@ export function Card({
   accessibilityHint,
   selected,
 }: CardProps) {
-  const composedStyle = [styles.card, { backgroundColor: color }, style];
+  const composedStyle = [styles.card, style];
+  // The colour fill, inset by the outline width. Its own silhouette against the dark
+  // backing is the inner edge — a layer edge, so it antialiases under rotation.
+  const fill = <Animated.View pointerEvents="none" style={[styles.fill, { backgroundColor: color }]} />;
   if (onPress) {
     return (
       <AnimatedPressable
@@ -46,10 +58,12 @@ export function Card({
         accessibilityLabel={accessibilityLabel}
         accessibilityHint={accessibilityHint}
         accessibilityState={{ selected }}
-      />
+      >
+        {fill}
+      </AnimatedPressable>
     );
   }
-  return <Animated.View style={composedStyle} />;
+  return <Animated.View style={composedStyle}>{fill}</Animated.View>;
 }
 
 const styles = StyleSheet.create({
@@ -61,13 +75,21 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: CARD_W,
     height: CARD_H,
-    borderRadius: 22,
-    borderWidth: 4,
-    borderColor: OUTLINE,
+    borderRadius: OUTER_RADIUS,
+    // The dark box IS the outline; the fill below sits on top, inset by OUTLINE_W.
+    backgroundColor: OUTLINE,
     shadowColor: '#000',
     shadowOpacity: 0.18,
     shadowRadius: 12,
     shadowOffset: { width: 0, height: 6 },
     elevation: 8,
+  },
+  fill: {
+    position: 'absolute',
+    top: OUTLINE_W,
+    left: OUTLINE_W,
+    right: OUTLINE_W,
+    bottom: OUTLINE_W,
+    borderRadius: INNER_RADIUS,
   },
 });
