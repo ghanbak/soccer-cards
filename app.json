@@ -10,7 +10,8 @@
       "supportsTablet": false,
       "bundleIdentifier": "com.ghanbak.bookem",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "UIViewEdgeAntialiasing": true
       },
       "icon": "./assets/app.icon"
     },
@@ -99,6 +100,12 @@
         "projectId": "97e1d378-f388-4ea6-a534-e4090bca483c"
       }
     },
-    "owner": "ghanbak"
+    "owner": "ghanbak",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/97e1d378-f388-4ea6-a534-e4090bca483c"
+    }
   }
 }
